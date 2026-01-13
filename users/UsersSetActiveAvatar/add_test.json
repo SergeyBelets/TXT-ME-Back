@@ -1,0 +1,1 @@
+{"statusCode":200,"headers":{"Content-Type":"application/json","Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"Content-Type,Authorization"},"body":"{\"avatar\":{\"avatarId\":\"1767868263188\",\"dataUrl\":\"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASURBVHgty44NEBMBB2d3g/9k=\",\"uploadedAt\":1767868263188},\"activeAvatarId\":\"1767868263188\"}"}
