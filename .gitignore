@@ -13,8 +13,27 @@ Thumbs.db
 *.log
 function.zip
 
-# Node/Python зависимости (если появятся внутри папок)
-**/node_modules/
+# Node/Python зависимости
+node_modules/
 __pycache__/
 
+# Тестовые JSON файлы для Lambda
+test_*.json
+*_test.json
+env.json
+add_test.json
+delete_test.json
+delete_fixed.json
+setactive_test.json
+setactive_good.json
+setactive_success.json
+email_test.json
+email_good.json
+email_success.json
+auth.zip
+
+# IDE
 .idea
+
+# Package locks (опционально)
+# package-lock.json
