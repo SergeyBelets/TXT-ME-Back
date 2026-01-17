@@ -1,0 +1,370 @@
+# This file is used only for local development.
+# It defines the resources and routes to be run via 'sam local start-api'.
+# Production uses the settings deployed to the cloud.
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Timeout: 30
+    MemorySize: 128
+
+Resources:
+  # Auth
+  AdminUsers:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: auth/AdminUsers
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /admin/users
+            Method: GET
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  AdminUserUpdate:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: auth/AdminUsers
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /admin/users
+            Method: PUT
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  AuthLogin:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: auth/AuthLogin
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /auth/login
+            Method: ANY
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  AuthRegister:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: auth/AuthRegister
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /auth/register
+            Method: ANY
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  # Comments
+  CommentCreate:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: comments/CommentCreate
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /posts/{id}/comments
+            Method: POST
+        ApiOptions: # CORS preflight
+          Type: Api
+          Properties:
+            Path: /posts/{id}/comments
+            Method: OPTIONS
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  CommentDelete:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: comments/CommentDelete
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /comments/{id}
+            Method: DELETE
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  CommentsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: comments/CommentsList
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /posts/{id}/comments
+            Method: GET
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  # Posts
+  PostCreate:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: posts/PostCreate
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /posts
+            Method: POST
+        ApiOptions: # CORS preflight
+          Type: Api
+          Properties:
+            Path: /posts
+            Method: OPTIONS
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  PostDelete:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: posts/PostDelete
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /posts/{id}
+            Method: DELETE
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  PostUpdate:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: posts/PostUpdate
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /posts/{id}
+            Method: PUT
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  PostsGet:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: posts/PostsGet
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /posts/{id}
+            Method: GET
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  PostsList:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: posts/PostsList
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /posts
+            Method: GET
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  PostsRecent:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: posts/PostsRecent
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /posts/recent
+            Method: GET
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  # Users
+  UsersAddAvatar:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: users/UsersAddAvatar
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /users/profile/avatars
+            Method: POST
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  UsersDeleteAvatar:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: users/UsersDeleteAvatar
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /users/profile/avatars/{avatarId}
+            Method: DELETE
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  UsersDeleteEmail:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: users/UsersDeleteEmail
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /users/profile/email
+            Method: DELETE
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  UsersGetProfile:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: users/UsersGetProfile
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /users/profile
+            Method: GET
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  UsersGetUserAvatar:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: users/UsersGetUserAvatar
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /users/{userId}/avatar
+            Method: GET
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  UsersSetActiveAvatar:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: users/UsersSetActiveAvatar
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /users/profile/avatars/{avatarId}/active
+            Method: POST
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  UsersUpdateEmail:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: users/UsersUpdateEmail
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /users/profile/email
+            Method: PUT
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  UsersUpdatePassword:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: users/UsersUpdatePassword
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /users/profile/password
+            Method: PUT
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  # Notifications (Background/Stream - not directly exposed via API in local SAM typically, but added for completeness)
+  NotificationsCommentsStream:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: notifications/NotificationsCommentsStream
+      Handler: processCommentsStream.handler
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  NotificationsPostsStream:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: notifications/NotofocationsPostsStream
+      Handler: processPostsStream.handler
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  NotificationsSendEmail:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: notifications/NotoficationsSendEmail
+      Handler: index.handler
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""

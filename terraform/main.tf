@@ -1,7 +1,9 @@
 provider "aws" {
   region                      = "eu-north-1"
-  access_key                  = "mock_access_key"
-  secret_key                  = "mock_secret_key"
+  # Exactly 20 characters
+  access_key = "MOCKACCESSKEY1234567"
+  # Exactly 40 characters
+  secret_key = "mocksecretkey12345678901234567890123456"
   skip_credentials_validation = true
   skip_metadata_api_check     = true
   skip_requesting_account_id  = true
@@ -18,11 +20,18 @@ resource "aws_dynamodb_table" "users" {
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "userId"
 
-  attribute { name = "userId"   type = "S" }
-  attribute { name = "username" type = "S" }
+  attribute {
+    name = "userId"
+    type = "S"
+  }
+
+  attribute {
+    name = "username"
+    type = "S"
+  }
 
   global_secondary_index {
-    name            = "UsernameIndex"
+    name            = "username-index"
     hash_key        = "username"
     projection_type = "ALL"
   }
@@ -34,9 +43,20 @@ resource "aws_dynamodb_table" "posts" {
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "postId"
 
-  attribute { name = "postId"    type = "S" }
-  attribute { name = "userId"    type = "S" }
-  attribute { name = "createdAt" type = "N" }
+  attribute {
+    name = "postId"
+    type = "S"
+  }
+
+  attribute {
+    name = "userId"
+    type = "S"
+  }
+
+  attribute {
+    name = "createdAt"
+    type = "N"
+  }
 
   global_secondary_index {
     name            = "userId-index"
@@ -57,9 +77,20 @@ resource "aws_dynamodb_table" "comments" {
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "commentId"
 
-  attribute { name = "commentId" type = "S" }
-  attribute { name = "postId"    type = "S" }
-  attribute { name = "createdAt" type = "N" }
+  attribute {
+    name = "commentId"
+    type = "S"
+  }
+
+  attribute {
+    name = "postId"
+    type = "S"
+  }
+
+  attribute {
+    name = "createdAt"
+    type = "N"
+  }
 
   global_secondary_index {
     name            = "postId-index"
@@ -75,8 +106,15 @@ resource "aws_dynamodb_table" "tags" {
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "tagId"
 
-  attribute { name = "tagId" type = "S" }
-  attribute { name = "name"  type = "S" }
+  attribute {
+    name = "tagId"
+    type = "S"
+  }
+
+  attribute {
+    name = "name"
+    type = "S"
+  }
 
   global_secondary_index {
     name            = "name-index"

@@ -3,7 +3,7 @@ import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const client = new DynamoDBClient({});
+const client = new DynamoDBClient({ region: 'eu-north-1', ...(process.env.DYNAMODB_URL && { endpoint: process.env.DYNAMODB_URL }) });
 const docClient = DynamoDBDocumentClient.from(client);
 
 // JWT Secret - use AWS Secrets Manager in production
@@ -20,6 +20,14 @@ export const handler = async (event) => {
   console.log("Event:", JSON.stringify(event));
 
   try {
+    if (event.httpMethod === "OPTIONS") {
+      return {
+        statusCode: 204,
+        headers: corsHeaders,
+        body: ""
+      };
+    }
+
     const body = JSON.parse(event.body || "{}");
     const { username, password } = body;
 
