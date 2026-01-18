@@ -14,7 +14,7 @@ Thumbs.db
 function.zip
 
 # Node/Python зависимости
-node_modules/
+node_modules
 __pycache__/
 
 # Тестовые JSON файлы для Lambda
