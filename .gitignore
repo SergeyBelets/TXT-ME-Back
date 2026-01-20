@@ -38,3 +38,10 @@ auth.zip
 # Package locks (опционально)
 # package-lock.json
 /docker/dynamodb/shared-local-instance.db
+
+shared-local-instance.db
+DynamoDBLocal.jar
+DynamoDBLocal_lib/
+terraform/.terraform/
+backups/
+dynamodb-local-metadata.json

@@ -1,0 +1,23 @@
+{
+  "name": "txt-me-back-local",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Local development server for TXT-ME backend",
+  "main": "local-server.mjs",
+  "scripts": {
+    "start": "node local-server.mjs",
+    "dev": "nodemon local-server.mjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.970.0",
+    "@aws-sdk/lib-dynamodb": "^3.970.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
