@@ -39,9 +39,9 @@ auth.zip
 # package-lock.json
 /docker/dynamodb/shared-local-instance.db
 
+backups/
 shared-local-instance.db
 DynamoDBLocal.jar
 DynamoDBLocal_lib/
 terraform/.terraform/
-backups/
 dynamodb-local-metadata.json
