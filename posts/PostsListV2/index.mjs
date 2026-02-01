@@ -44,7 +44,7 @@ export const handler = async (event) => {
 
     let items = [];
     let queryParams = {
-      Limit: pageSize,
+      Limit: pageSize + 1,
       ScanIndexForward: false, // Default to newest first
     };
 
@@ -139,14 +139,31 @@ export const handler = async (event) => {
     };
 
     if (items.length > 0) {
+      const hasMoreInQueryDirection = items.length > pageSize;
+      if (hasMoreInQueryDirection) {
+        items.pop();
+      }
+
       // If we queried with until, the items were returned in ascending order (older to newer)
       // because ScanIndexForward was true. We need to reverse them to keep newest first.
       if (until) {
         items.reverse();
       }
 
-      response.page.nextSince = items[items.length - 1].createdAt;
-      response.page.prevUntil = items[0].createdAt;
+      // Pagination logic:
+      // 1. nextSince (Older) exists if:
+      //    - We are moving forward (no until) and there's more data.
+      //    - OR we are moving backward (until), then we can always go further back (since we started from somewhere).
+      if ((!until && hasMoreInQueryDirection) || until) {
+        response.page.nextSince = items[items.length - 1].createdAt;
+      }
+
+      // 2. prevUntil (Newer) exists if:
+      //    - We are moving backward (until) and there's more data.
+      //    - OR we are moving forward (since), then we can always go back to where we came from.
+      if ((until && hasMoreInQueryDirection) || since) {
+        response.page.prevUntil = items[0].createdAt;
+      }
     }
 
     return {
