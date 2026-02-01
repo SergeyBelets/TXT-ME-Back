@@ -58,6 +58,11 @@ resource "aws_dynamodb_table" "posts" {
     type = "N"
   }
 
+  attribute {
+    name = "feedKey"
+    type = "S"
+  }
+
   global_secondary_index {
     name            = "userId-index"
     hash_key        = "userId"
@@ -68,6 +73,20 @@ resource "aws_dynamodb_table" "posts" {
     name            = "createdAt-index"
     hash_key        = "createdAt"
     projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "feedKey-createdAt-index"
+    hash_key        = "feedKey"
+    range_key       = "createdAt"
+    projection_type = "KEYS_ONLY"
+  }
+
+  global_secondary_index {
+    name            = "userId-createdAt-index"
+    hash_key        = "userId"
+    range_key       = "createdAt"
+    projection_type = "KEYS_ONLY"
   }
 }
 
@@ -120,5 +139,23 @@ resource "aws_dynamodb_table" "tags" {
     name            = "name-index"
     hash_key        = "name"
     projection_type = "ALL"
+  }
+}
+
+# --- TABLE: CMS-TagPosts ---
+resource "aws_dynamodb_table" "tag_posts" {
+  name         = "CMS-TagPosts"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "tag"
+  range_key    = "createdAt"
+
+  attribute {
+    name = "tag"
+    type = "S"
+  }
+
+  attribute {
+    name = "createdAt"
+    type = "N"
   }
 }
