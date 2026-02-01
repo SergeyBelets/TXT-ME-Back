@@ -141,19 +141,31 @@ export const handler = async (event) => {
             Item: { tag, createdAt, postId }
           }
         });
-        transactItems.push({
-          Put: {
+      }
+
+      await dynamodb.send(new TransactWriteCommand({
+        TransactItems: transactItems
+      }));
+
+      // Ensure tags exist in CMS-Tags (outside of transaction)
+      for (const tag of toAdd) {
+        try {
+          await dynamodb.send(new PutCommand({
             TableName: TAGS_TABLE,
             Item: { tagId: tag, name: tag },
             ConditionExpression: 'attribute_not_exists(tagId)'
+          }));
+        } catch (tagErr) {
+          if (tagErr.name !== 'ConditionalCheckFailedException') {
+            console.error(`Failed to ensure tag ${tag} exists:`, tagErr);
           }
-        });
+        }
       }
+    } else {
+      await dynamodb.send(new TransactWriteCommand({
+        TransactItems: transactItems
+      }));
     }
-
-    await dynamodb.send(new TransactWriteCommand({
-      TransactItems: transactItems
-    }));
 
     return {
       statusCode: 200,
