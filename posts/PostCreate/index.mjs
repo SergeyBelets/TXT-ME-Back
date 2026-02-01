@@ -115,15 +115,6 @@ export const handler = async (event) => {
             }
           }
         });
-        
-        // Optional: Ensure tag exists in CMS-Tags
-        transactItems.push({
-          Put: {
-            TableName: TAGS_TABLE,
-            Item: { tagId: tag, name: tag },
-            ConditionExpression: 'attribute_not_exists(tagId)'
-          }
-        });
       }
     }
 
@@ -132,6 +123,24 @@ export const handler = async (event) => {
     await dynamodb.send(new TransactWriteCommand({
       TransactItems: transactItems
     }));
+
+    // Ensure tags exist in CMS-Tags (outside of transaction to avoid ConditionalCheckFailed cancellations)
+    if (post.tags && post.tags.length > 0) {
+      for (const tag of post.tags) {
+        try {
+          await dynamodb.send(new PutCommand({
+            TableName: TAGS_TABLE,
+            Item: { tagId: tag, name: tag },
+            ConditionExpression: 'attribute_not_exists(tagId)'
+          }));
+        } catch (tagErr) {
+          // If tag already exists, ignore ConditionalCheckFailed
+          if (tagErr.name !== 'ConditionalCheckFailedException') {
+            console.error(`Failed to ensure tag ${tag} exists:`, tagErr);
+          }
+        }
+      }
+    }
 
     return {
       statusCode: 201,
