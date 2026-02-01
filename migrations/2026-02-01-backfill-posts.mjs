@@ -19,7 +19,7 @@
  */
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand, UpdateCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import {DynamoDBDocumentClient, ScanCommand, UpdateCommand, PutCommand, QueryCommand} from "@aws-sdk/lib-dynamodb";
 
 const POSTS_TABLE = 'CMS-Posts';
 const TAG_POSTS_TABLE = 'CMS-TagPosts';
@@ -48,6 +48,7 @@ async function backfill() {
     let totalProcessed = 0;
     let totalUpdated = 0;
     let totalTagsCreated = 0;
+    let totalUsersFound = 0;
 
     do {
       const scanResult = await docClient.send(new ScanCommand({
@@ -60,6 +61,32 @@ async function backfill() {
 
       for (const post of items) {
         totalProcessed++;
+
+        // 0. Ensure username exists and matches userId in CMS-Users
+        if (post.username && post.userId) {
+          const userResult = await docClient.send(new QueryCommand({
+            TableName: 'CMS-Users',
+            IndexName: 'username-index',
+            KeyConditionExpression: 'username = :u',
+            ExpressionAttributeValues: { ':u': post.username },
+          }));
+
+          const existingUser = userResult.Items?.[0];
+          if (!existingUser) {
+            // User doesn't exist in CMS-Users, let's create a stub so author filtering works
+            console.log(`\n👤 Создаем запись для пользователя: ${post.username}`);
+            await docClient.send(new PutCommand({
+              TableName: 'CMS-Users',
+              Item: {
+                userId: post.userId,
+                username: post.username,
+                role: 'AVTOR', // Default role
+                createdAt: post.createdAt
+              }
+            }));
+            totalUsersFound++;
+          }
+        }
 
         // 1. Update CMS-Posts with feedKey="GLOBAL"
         if (!post.feedKey) {
