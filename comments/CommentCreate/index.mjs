@@ -38,9 +38,16 @@ export const handler = async (event) => {
     const userId = decoded.sub || decoded.userId;
     const username = decoded.username;
 
-    const postId = event.pathParameters.id;
     const body = JSON.parse(event.body);
-    const { content, parentCommentId, commentAvatarId } = body;
+    const { content, parentCommentId, commentAvatarId, postId } = body;
+
+    if (!postId) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'Post ID is required' }),
+      };
+    }
 
     if (!content) {
       return {

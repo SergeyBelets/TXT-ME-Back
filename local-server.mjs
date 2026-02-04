@@ -154,7 +154,7 @@ app.post('/comments', async (req, res) => {
   }
 });
 
-app.get('/comments/:postId', async (req, res) => {
+app.get('/comments/:id', async (req, res) => {
   try {
     const event = createLambdaEvent(req);
     const response = await commentsList(event);
