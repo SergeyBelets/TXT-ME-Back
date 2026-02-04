@@ -54,6 +54,11 @@ Resources:
           Properties:
             Path: /auth/login
             Method: POST
+        ApiOptions: # CORS preflight
+          Type: Api
+          Properties:
+            Path: /auth/login
+            Method: OPTIONS
       Environment:
         Variables:
           DYNAMODB_URL: ""
@@ -69,6 +74,11 @@ Resources:
           Properties:
             Path: /auth/register
             Method: POST
+        ApiOptions: # CORS preflight
+          Type: Api
+          Properties:
+            Path: /auth/register
+            Method: OPTIONS
       Environment:
         Variables:
           DYNAMODB_URL: ""
@@ -120,6 +130,11 @@ Resources:
           Properties:
             Path: /posts/{id}/comments/{commentId}
             Method: DELETE
+        ApiOptions: # CORS preflight
+          Type: Api
+          Properties:
+            Path: /posts/{postId}/comments/{commentId}
+            Method: OPTIONS
       Environment:
         Variables:
           DYNAMODB_URL: ""
@@ -221,6 +236,26 @@ Resources:
           Properties:
             Path: /posts
             Method: GET
+      Environment:
+        Variables:
+          DYNAMODB_URL: ""
+
+  PostsListV2:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: posts/PostsListV2
+      Handler: index.handler
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /v2/posts
+            Method: GET
+        ApiOptions: # CORS preflight
+          Type: Api
+          Properties:
+            Path: /v2/posts
+            Method: OPTIONS
       Environment:
         Variables:
           DYNAMODB_URL: ""
